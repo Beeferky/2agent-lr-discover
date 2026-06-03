@@ -1,0 +1,7 @@
+{
+  "final_eval_loss": 3.4190858006477356,
+  "final_eval_ppl": 30.5414812521011,
+  "final_eval_tokens": 10046076,
+  "update_step": 10001,
+  "seed": 42
+}

@@ -1,0 +1,18 @@
+# Core ML
+torch>=2.0
+transformers>=4.28
+datasets
+
+# LLM Agent (DashScope-compatible OpenAI client for Qwen3.6-Plus)
+openai>=1.0
+
+# Optimizers
+schedulefree
+
+# Logging / observability
+wandb
+tqdm
+loguru
+
+# Utils
+numpy

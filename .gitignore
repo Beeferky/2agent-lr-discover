@@ -1,0 +1,61 @@
+# ── 密钥 / 环境（绝对不能传）──
+.env
+.env.local
+.env.*.local
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ── 训练产物（太大）──
+results/
+checkpoints/
+*.safetensors
+*.pt
+*.bin
+
+# ── wandb 本地数据（用云端版本）──
+wandb/
+
+# ── 训练日志 ──
+session_logs/
+*.log
+agent_qwen_*.log
+campaign_*.log
+cosine_*.log
+
+# ── 备份文件 ──
+*.bak
+*.bak_before_*
+*.backup
+
+# ── Agent 运行时通信文件（每次跑都重新生成）──
+training_state.json
+training_state_temp.json
+lr_command.txt
+lr_command_temp.txt
+.last_agent_run_ts
+
+# ── Claude Code 内部 ──
+CLAUDE.md
+.claude/
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ── 临时 ──
+*.tmp
+*.swp
+*~
+
+# Git history backup（fresh start 时备份的旧 .git）
+.git.bak_pre_fresh/

@@ -16,3 +16,4 @@ loguru
 
 # Utils
 numpy
+matplotlib

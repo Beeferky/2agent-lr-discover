@@ -8,16 +8,17 @@ Qwen3.6-Plus drives two cooperating LLM agents — a `Controller` (per-K-step LR
 
 ## Key Finding 🎯
 
-**Agent successfully trained at peak LR = 1e-2 where hand-tuned cosine-decay diverges:**
+**Agent successfully trained at peak LR = 1e-2 where hand-tuned cosine-decay diverges.**
 
-| | peak LR | final ppl |
-|---|---|---|
-| Cosine baseline at peak 1e-2 | 1e-2 | **215.08 💥 (diverged)** |
-| **Agent R39** | 1e-2 | **31.18 ✓ (stable)** |
+![Head-to-head comparison: cosine vs agent at matching peak LRs](docs/figures/02_head_to_head.png)
 
-The agent achieved this by automatically discovering a non-standard schedule shape (deeper effective decay than cosine's `0.1 × peak` rule), extending the operating envelope beyond analytical scheduler's convergence boundary.
+At peak LR = 1e-2, the agent achieves **ppl 31.18** while cosine-decay diverges to **ppl 215**. The agent's automatically discovered schedule shape (deeper effective decay than cosine's standard `0.1 × peak`) extends the operating envelope beyond the analytical scheduler's convergence boundary.
 
 Across 40 cross-round iterations, the system progressed: mean ppl `46 → 36 → 33 → 32.6` over four 10-round phases.
+
+![40-round cross-round learning curve](docs/figures/01_cross_round_learning.png)
+
+The framework also reveals failure modes — e.g., R40 catastrophically failed at the *same* configuration that gave R39's breakthrough, exposing the stochasticity inherent to LLM-driven scheduling at boundary LR regions.
 
 See [`docs/日志2_40轮后的发现.md`](docs/日志2_40轮后的发现.md) for the full 40-round analysis (Chinese), including the head-to-head comparison with cosine sweeps and failure-mode characterization.
 
@@ -169,7 +170,21 @@ Runs cosine-decay baselines at each peak LR (no agent involved).
 | 3e-3 | 30.37 | — | cosine (agent never explored; "dead zone") |
 | 1e-2 | 215.08 💥 | **31.18 / 309.08** | agent (stochastic, 1/2 success rate) |
 
-The agent's value is not in beating cosine on its best peak, but in **extending the safe operating range of LR scheduling** to regions where analytical methods fail. See `docs/日志2_40轮后的发现.md` for failure-mode analysis (Memory attribution errors, plateau-rule self-suppression, etc.).
+The agent's value is not in beating cosine on its best peak, but in **extending the safe operating range of LR scheduling** to regions where analytical methods fail.
+
+### Exploration Landscape
+
+![Where agent sampled vs cosine sweep curve](docs/figures/04_exploration_landscape.png)
+
+Each colored dot is one agent round (color = round number). The red curve is the cosine baseline sweep. **The shaded "dead zone" (3e-3 to 5e-3, cosine's optimum region) was never explored by the agent** — a consequence of Memory attribution error after R28's single failed attempt at 2.5e-3 (see docs).
+
+### LR Schedule Shape Evolution
+
+![How the discovered schedule shape changes across rounds](docs/figures/03_lr_schedule_evolution.png)
+
+The agent's LR schedules evolved from conservative (R3: stuck at init 3e-4) through plateau-discovery (R10: found 1e-3) to the eventual breakthrough shape (R39: peak 1e-2 with deeper-than-cosine decay). Note the agent's discovered shapes systematically differ from the standard cosine reference.
+
+See [`docs/日志2_40轮后的发现.md`](docs/日志2_40轮后的发现.md) for failure-mode analysis (Memory attribution errors, plateau-rule self-suppression, etc.).
 
 ---
 
